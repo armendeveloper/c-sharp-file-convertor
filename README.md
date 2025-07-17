@@ -1,127 +1,157 @@
-# FileConverter
+# C# File Converter
 
-A comprehensive C# solution for converting between different file formats, supporting images, audio, and video files.
+A powerful, modern file conversion application built with C# and .NET 9, featuring both a beautiful WPF desktop interface and a command-line interface. Convert between various image, audio, and video formats with ease.
 
-## Features
+![File Converter Screenshot](a.png)
 
-### Supported File Types
+## 🚀 Features
 
-**Images:**
-- JPEG (.jpg, .jpeg)
-- PNG (.png)
-- BMP (.bmp)
-- GIF (.gif)
-- WebP (.webp)
-- TIFF (.tiff, .tif)
+### 🖼️ **Image Conversion**
+- **Supported Formats**: JPEG, PNG, BMP, GIF, WebP, TIFF
+- **Quality Control**: Adjustable quality settings for lossy formats
+- **Batch Processing**: Convert multiple images simultaneously
+- **Lossless Processing**: Preserve image quality where possible
 
-**Audio:**
-- MP3 (.mp3)
-- WAV (.wav)
-- FLAC (.flac)
-- AAC (.aac)
-- OGG (.ogg)
-- M4A (.m4a)
+### 🎵 **Audio Conversion**
+- **Supported Formats**: MP3, WAV, FLAC, AAC, OGG, M4A
+- **Quality Settings**: Configurable bitrate and sample rate
+- **Metadata Preservation**: Maintain audio tags and metadata
+- **Professional Quality**: Powered by FFmpeg
 
-**Video:**
-- MP4 (.mp4)
-- AVI (.avi)
-- MOV (.mov)
-- MKV (.mkv)
-- WebM (.webm)
-- WMV (.wmv)
-- FLV (.flv)
+### 🎬 **Video Conversion**
+- **Supported Formats**: MP4, AVI, MOV, MKV, WebM, WMV, FLV
+- **Advanced Options**: Bitrate, frame rate, and resolution control
+- **Codec Selection**: Multiple video and audio codec options
+- **Hardware Acceleration**: Optimized performance
 
-## Prerequisites
+### 🎨 **Modern User Interface**
+- **WPF Application**: Beautiful Material Design interface
+- **Drag & Drop**: Simply drag files into the application
+- **Progress Tracking**: Real-time conversion progress bars
+- **Batch Operations**: Convert multiple files at once
+- **Error Handling**: Clear error messages and status updates
 
-### For Audio and Video Conversion
-- **FFmpeg** must be installed and accessible in your system PATH
-- Download from: https://ffmpeg.org/download.html
+## 📦 Project Structure
 
-### .NET Requirements
-- .NET 8.0 or later
-
-## Installation
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd FileConverter
+```
+FileConverter/
+├── FileConverter.Core/          # Core conversion library
+│   ├── Enums/                  # File type enumerations
+│   ├── Interfaces/             # Service interfaces
+│   ├── Models/                 # Data models
+│   └── Services/               # Conversion services
+├── FileConverter.WPF/          # WPF desktop application
+│   ├── Behaviors/              # Custom WPF behaviors
+│   ├── Converters/             # Value converters
+│   ├── Models/                 # WPF-specific models
+│   ├── Styles/                 # UI styling
+│   ├── ViewModels/             # MVVM view models
+│   └── Views/                  # WPF windows and controls
+├── FileConverter.CLI/          # Command-line interface
+├── FileConverter.Tests/        # Unit and integration tests
+└── README.md
 ```
 
-2. Build the solution:
+## 🛠️ Prerequisites
+
+- **.NET 9.0 SDK** or later
+- **Windows 10/11** (for WPF application)
+- **FFmpeg** (automatically downloaded for audio/video conversions)
+
+## 📥 Installation
+
+### Quick Start (WPF Application)
 ```bash
+# Clone the repository
+git clone https://github.com/armendeveloper/c-sharp-file-convertor.git
+cd c-sharp-file-convertor
+
+# Build and run the WPF application
+dotnet run --project FileConverter.WPF
+```
+
+### Using the Build Scripts
+```bash
+# Windows batch files for easy setup
+build-wpf.bat          # Build the WPF application
+run-wpf.bat             # Run the WPF application
+install-ffmpeg.bat      # Install FFmpeg automatically
+```
+
+### Manual Build
+```bash
+# Restore dependencies
+dotnet restore
+
+# Build all projects
 dotnet build
+
+# Run tests
+dotnet test
+
+# Run specific projects
+dotnet run --project FileConverter.CLI
+dotnet run --project FileConverter.WPF
 ```
 
-3. (Optional) Create a global tool:
-```bash
-dotnet pack FileConverter.CLI
-dotnet tool install --global --add-source ./FileConverter.CLI/nupkg FileConverter.CLI
-```
+## 🎯 Usage
 
-## Usage
+### WPF Desktop Application
+
+1. **Launch the Application**
+   ```bash
+   dotnet run --project FileConverter.WPF
+   ```
+
+2. **Add Files**
+   - **Drag & Drop**: Drag files directly into the application window
+   - **File Browser**: Click "SELECT FILES" to browse for files
+   - **Folder Support**: Drop entire folders to add all supported files
+
+3. **Convert Files**
+   - **Individual Conversion**: Click the play button (▶️) next to any file
+   - **Batch Conversion**: Click "CONVERT ALL" to process all files
+   - **Format Selection**: Choose target formats individually or apply to all
 
 ### Command Line Interface
 
-#### Basic Usage
 ```bash
-# Convert image.png to image.jpg
-dotnet run --project FileConverter.CLI -- image.png image.jpg
+# Convert a single file
+dotnet run --project FileConverter.CLI -- convert input.jpg output.png
 
-# Convert audio.wav to audio.mp3
-dotnet run --project FileConverter.CLI -- -i audio.wav -o audio.mp3
+# Convert with specific format
+dotnet run --project FileConverter.CLI -- convert input.mp4 output.avi --format avi
 
-# Convert video with specific format
-dotnet run --project FileConverter.CLI -- video.avi video.mp4 -f Mp4
-```
+# Batch convert all files in a directory
+dotnet run --project FileConverter.CLI -- batch-convert ./images/ ./output/ --format png
 
-#### Command Line Options
-```
-FileConverter [options] <input> <output>
-
-Options:
-  -i, --input <path>     Input file path
-  -o, --output <path>    Output file path
-  -f, --format <format>  Target format (optional, auto-detected from output extension)
-  --formats              Show supported formats
-  -h, --help             Show help message
-```
-
-#### Examples
-```bash
-# Simple conversion (format detected from extension)
-FileConverter image.png image.jpg
-FileConverter audio.wav audio.mp3
-FileConverter video.avi video.mp4
-
-# Using explicit parameters
-FileConverter -i input.bmp -o output.png
-FileConverter --input audio.flac --output audio.aac
-
-# Show all supported formats
-FileConverter --formats
+# Show supported formats
+dotnet run --project FileConverter.CLI -- list-formats
 
 # Get help
-FileConverter --help
+dotnet run --project FileConverter.CLI -- --help
 ```
 
 ### Programmatic Usage
 
-#### Basic Conversion
 ```csharp
 using FileConverter.Core.Services;
-using FileConverter.Core.Interfaces;
+using FileConverter.Core.Enums;
 
-// Setup services
-IFileTypeDetector detector = new FileTypeDetector();
-IConversionService converter = new ConversionService(detector);
+// Initialize services
+var fileTypeDetector = new FileTypeDetector();
+var conversionService = new ConversionService(fileTypeDetector);
 
 // Convert a file
-var result = await converter.ConvertFileAsync("input.png", "output.jpg");
+var result = await conversionService.ConvertFileAsync(
+    "input.jpg", 
+    "output.png", 
+    FileType.Png
+);
 
 if (result.Success)
 {
-    Console.WriteLine($"Conversion successful: {result.Message}");
+    Console.WriteLine($"Conversion completed: {result.OutputFilePath}");
     Console.WriteLine($"Processing time: {result.ProcessingTime}");
 }
 else
@@ -130,125 +160,143 @@ else
 }
 ```
 
-#### Advanced Options
-```csharp
-using FileConverter.Core.Models;
-using FileConverter.Core.Enums;
+## 🔧 Configuration
 
-// Create a conversion request with options
+### FFmpeg Setup
+
+The application automatically handles FFmpeg installation:
+
+1. **Automatic Download**: FFmpeg is downloaded automatically on first use
+2. **System Installation**: Use your package manager:
+   ```bash
+   # Windows (Chocolatey)
+   choco install ffmpeg
+   
+   # Windows (Winget)
+   winget install FFmpeg.FFmpeg
+   
+   # Or run the provided script
+   install-ffmpeg.bat
+   ```
+
+### Quality Settings
+
+```csharp
+var options = new Dictionary<string, object>
+{
+    {"quality", 85},      // JPEG/WebP quality (1-100)
+    {"bitrate", 192},     // Audio bitrate (kbps)
+    {"sampleRate", 48000}, // Audio sample rate (Hz)
+    {"videoBitrate", 2000}, // Video bitrate (kbps)
+    {"fps", 30}           // Video frame rate
+};
+
 var request = new ConversionRequest
 {
-    InputFilePath = "input.jpg",
-    OutputFilePath = "output.png",
-    TargetFormat = FileType.Png,
-    Options = new Dictionary<string, object>
-    {
-        ["quality"] = 90  // For JPEG/WebP
-    }
-};
-
-// For audio/video, you can specify additional options:
-var audioRequest = new ConversionRequest
-{
-    InputFilePath = "input.wav",
-    OutputFilePath = "output.mp3",
-    TargetFormat = FileType.Mp3,
-    Options = new Dictionary<string, object>
-    {
-        ["bitrate"] = 192,        // Audio bitrate in kbps
-        ["sampleRate"] = 44100    // Sample rate in Hz
-    }
-};
-
-var videoRequest = new ConversionRequest
-{
-    InputFilePath = "input.avi",
+    InputFilePath = "input.mp4",
     OutputFilePath = "output.mp4",
     TargetFormat = FileType.Mp4,
-    Options = new Dictionary<string, object>
-    {
-        ["videoBitrate"] = 2000,  // Video bitrate in kbps
-        ["audioBitrate"] = 128,   // Audio bitrate in kbps
-        ["fps"] = 30,             // Frames per second
-        ["width"] = 1920,         // Video width
-        ["height"] = 1080         // Video height
-    }
+    Options = options
 };
 ```
 
-## Architecture
+## 🧪 Testing
 
-### Project Structure
+```bash
+# Run all tests
+dotnet test
+
+# Run with coverage
+dotnet test --collect:"XPlat Code Coverage"
+
+# Run specific test categories
+dotnet test --filter Category=Unit
+dotnet test --filter Category=Integration
+
+# Run tests for specific project
+dotnet test FileConverter.Tests
 ```
-FileConverter/
-├── FileConverter.Core/          # Core conversion logic
-│   ├── Enums/                   # File type definitions
-│   ├── Interfaces/              # Service contracts
-│   ├── Models/                  # Data models
-│   └── Services/                # Implementation services
-├── FileConverter.CLI/           # Command-line interface
-└── FileConverter.sln           # Solution file
-```
+
+## 🏗️ Architecture
 
 ### Core Components
 
-#### Services
-- **ConversionService**: Main orchestrator for file conversions
-- **FileTypeDetector**: Detects file types from extensions
-- **ImageConverter**: Handles image format conversions using ImageSharp
-- **AudioConverter**: Handles audio format conversions using FFMpegCore
-- **VideoConverter**: Handles video format conversions using FFMpegCore
+- **FileTypeDetector**: Identifies file formats by extension
+- **ConversionService**: Orchestrates conversion operations
+- **ImageConverter**: Handles image conversions using ImageSharp
+- **AudioConverter**: Processes audio files using FFmpeg
+- **VideoConverter**: Converts video files using FFmpeg
+- **FFmpegService**: Manages FFmpeg installation and configuration
 
-#### Models
-- **ConversionRequest**: Represents a conversion request with options
-- **ConversionResult**: Contains the result of a conversion operation
+### Design Patterns
 
-#### Dependencies
-- **FFMpegCore**: Audio and video processing
-- **SixLabors.ImageSharp**: Image processing
-- **Microsoft.Extensions.Hosting**: Dependency injection and hosting
+- **Dependency Injection**: Clean service registration and resolution
+- **Strategy Pattern**: Different converters for different file types
+- **MVVM Pattern**: Separation of concerns in WPF application
+- **Repository Pattern**: Abstracted data access (future-ready)
 
-## Error Handling
+## 🤝 Contributing
 
-The application provides comprehensive error handling:
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
+3. **Commit your changes**: `git commit -m 'Add amazing feature'`
+4. **Push to the branch**: `git push origin feature/amazing-feature`
+5. **Open a Pull Request**
 
-- **File not found**: Clear error messages for missing input files
-- **Unsupported formats**: Validation of supported file types
-- **FFmpeg issues**: Detailed error reporting for audio/video conversion problems
-- **Processing errors**: Exception details and processing time information
+### Development Guidelines
 
-## Performance Considerations
+- Follow C# coding conventions
+- Add unit tests for new features
+- Update documentation as needed
+- Ensure all tests pass before submitting
 
-- **Asynchronous processing**: All conversions are performed asynchronously
-- **Memory efficient**: Streaming processing for large files
-- **Progress tracking**: Processing time measurement for all operations
+## 📋 Supported File Formats
 
-## Contributing
+| Category | Input Formats | Output Formats |
+|----------|---------------|----------------|
+| **Images** | JPEG, PNG, BMP, GIF, WebP, TIFF | JPEG, PNG, BMP, GIF, WebP, TIFF |
+| **Audio** | MP3, WAV, FLAC, AAC, OGG, M4A | MP3, WAV, FLAC, AAC, OGG, M4A |
+| **Video** | MP4, AVI, MOV, MKV, WebM, WMV, FLV | MP4, AVI, MOV, MKV, WebM, WMV, FLV |
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+## 🐛 Troubleshooting
 
-## License
+### Common Issues
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+1. **"FFmpeg not found" error**
+   - Run `install-ffmpeg.bat` or install FFmpeg manually
+   - Ensure FFmpeg is in your system PATH
 
-## Troubleshooting
+2. **"Unsupported file type" error**
+   - Check that the file extension is supported
+   - Verify the file is not corrupted
 
-### FFmpeg Not Found
-If you encounter errors with audio/video conversion:
-1. Ensure FFmpeg is installed on your system
-2. Verify FFmpeg is in your system PATH
-3. Test FFmpeg installation: `ffmpeg -version`
+3. **Build errors**
+   - Ensure .NET 9.0 SDK is installed
+   - Run `dotnet restore` to restore packages
 
-### Unsupported Format
-- Check the supported formats list using `--formats`
-- Ensure file extensions match the actual file content
-- Verify the target format is supported for the source file category
+### Performance Tips
 
-### Performance Issues
-- For large video files, consider adjusting bitrate and resolution options
-- Monitor system resources during conversion
-- Use appropriate output formats for your use case 
+- **Large Files**: Process large video files individually
+- **Batch Operations**: Limit concurrent conversions for better performance
+- **Memory Usage**: Close the application between large batch operations
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **ImageSharp**: High-performance image processing library
+- **FFMpegCore**: .NET wrapper for FFmpeg
+- **Material Design**: Beautiful UI components
+- **Community Toolkit**: MVVM helpers and utilities
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/armendeveloper/c-sharp-file-convertor/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/armendeveloper/c-sharp-file-convertor/discussions)
+- **Email**: analbandyan@servicetitan.com
+
+---
+
+**Built with ❤️ using C# and .NET 9** 
