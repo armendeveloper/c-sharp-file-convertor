@@ -1,0 +1,357 @@
+<Window x:Class="FileConverter.WPF.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:behaviors="clr-namespace:FileConverter.WPF.Behaviors"
+        mc:Ignorable="d"
+        Title="File Converter" 
+        Height="800" 
+        Width="1200"
+        MinHeight="600" 
+        MinWidth="800"
+        WindowStartupLocation="CenterScreen"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}">
+
+    <i:Interaction.Behaviors>
+        <behaviors:FileDragDropBehavior />
+    </i:Interaction.Behaviors>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <materialDesign:Card Grid.Row="0" 
+                            Margin="16,16,16,8" 
+                            Padding="24,16"
+                            materialDesign:ElevationAssist.Elevation="Dp4">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="SwapHorizontal" 
+                                           Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                           Width="32" 
+                                           Height="32" 
+                                           VerticalAlignment="Center" />
+                    <TextBlock Text="File Converter" 
+                             Style="{DynamicResource MaterialDesignHeadline5TextBlock}"
+                             Margin="12,0,0,0"
+                             VerticalAlignment="Center" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <TextBlock Text="{Binding StatusText}" 
+                             VerticalAlignment="Center"
+                             Margin="0,0,16,0" />
+                    <materialDesign:PackIcon Kind="Information" 
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource PrimaryHueMidBrush}" />
+                </StackPanel>
+            </Grid>
+        </materialDesign:Card>
+
+        <!-- Controls -->
+        <materialDesign:Card Grid.Row="1" 
+                            Margin="16,8,16,8" 
+                            Padding="16"
+                            materialDesign:ElevationAssist.Elevation="Dp2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- File Operations -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Button Content="SELECT FILES" 
+                            Command="{Binding SelectFilesCommand}"
+                            Style="{DynamicResource MaterialDesignRaisedButton}"
+                            materialDesign:ButtonAssist.CornerRadius="4"
+                            Margin="0,0,8,0" />
+                    
+                    <Button Content="CONVERT ALL" 
+                            Command="{Binding ConvertAllCommand}"
+                            Style="{DynamicResource MaterialDesignRaisedButton}"
+                            materialDesign:ButtonAssist.CornerRadius="4"
+                            Background="{DynamicResource PrimaryHueMidBrush}"
+                            BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+                            IsEnabled="{Binding HasFiles}"
+                            Margin="0,0,8,0" />
+                </StackPanel>
+
+                <!-- Format Selection -->
+                <StackPanel Grid.Column="1" 
+                           Orientation="Horizontal" 
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center">
+                    <TextBlock Text="Apply to all:" 
+                             VerticalAlignment="Center"
+                             Margin="0,0,8,0" />
+                    
+                    <ComboBox ItemsSource="{Binding Categories}"
+                            SelectedItem="{Binding SelectedCategory}"
+                            Width="100"
+                            Margin="0,0,8,0" />
+                    
+                    <ComboBox Width="100"
+                            Margin="0,0,8,0">
+                        <ComboBox.Style>
+                            <Style TargetType="ComboBox">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedCategory}" Value="Image">
+                                        <Setter Property="ItemsSource" Value="{Binding AvailableImageFormats}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedCategory}" Value="Audio">
+                                        <Setter Property="ItemsSource" Value="{Binding AvailableAudioFormats}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedCategory}" Value="Video">
+                                        <Setter Property="ItemsSource" Value="{Binding AvailableVideoFormats}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ComboBox.Style>
+                        <ComboBox.SelectedItem>
+                            <Binding Path="SelectedTargetFormat" />
+                        </ComboBox.SelectedItem>
+                    </ComboBox>
+                    
+                    <Button Content="APPLY" 
+                            Command="{Binding ApplyTargetFormatToAllCommand}"
+                            Style="{DynamicResource MaterialDesignOutlinedButton}"
+                            materialDesign:ButtonAssist.CornerRadius="4" />
+                </StackPanel>
+
+                <!-- Clear Operations -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Button Content="CLEAR COMPLETED" 
+                            Command="{Binding ClearCompletedCommand}"
+                            Style="{DynamicResource MaterialDesignOutlinedButton}"
+                            materialDesign:ButtonAssist.CornerRadius="4"
+                            Margin="0,0,8,0" />
+                    
+                    <Button Content="CLEAR ALL" 
+                            Command="{Binding ClearAllCommand}"
+                            Style="{DynamicResource MaterialDesignOutlinedButton}"
+                            materialDesign:ButtonAssist.CornerRadius="4" />
+                </StackPanel>
+            </Grid>
+        </materialDesign:Card>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="2" Margin="16,8,16,8">
+            <!-- Drop Zone (visible when no files) -->
+            <Border Background="#F9F9F9" 
+                    BorderBrush="#CCCCCC" 
+                    BorderThickness="2" 
+                    CornerRadius="8" 
+                    Padding="20"
+                    Visibility="{Binding HasFiles, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                <StackPanel HorizontalAlignment="Center" 
+                           VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="CloudUpload" 
+                                           Width="64" 
+                                           Height="64" 
+                                           Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                           HorizontalAlignment="Center" />
+                    <TextBlock Text="Drag and drop files here" 
+                             Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
+                             HorizontalAlignment="Center"
+                             Margin="0,16,0,8" />
+                    <TextBlock Text="or click 'Select Files' to browse"
+                             Style="{DynamicResource MaterialDesignCaptionTextBlock}"
+                             HorizontalAlignment="Center"
+                             Foreground="{DynamicResource MaterialDesignBodyLight}" />
+                    <TextBlock Text="Supports: Images, Audio, Video files"
+                             Style="{DynamicResource MaterialDesignCaptionTextBlock}"
+                             HorizontalAlignment="Center"
+                             Margin="0,8,0,0"
+                             Foreground="{DynamicResource MaterialDesignBodyLight}" />
+                </StackPanel>
+            </Border>
+
+            <!-- File List -->
+            <ScrollViewer Visibility="{Binding HasFiles, Converter={StaticResource BooleanToVisibilityConverter}}"
+                         VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding ConversionItems}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <materialDesign:Card Margin="0,4" 
+                                               Padding="16" 
+                                               materialDesign:ElevationAssist.Elevation="Dp2">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <!-- File Icon -->
+                                    <materialDesign:PackIcon Grid.Column="0" 
+                                                           Grid.RowSpan="2"
+                                                           Kind="{Binding SourceFormat, Converter={StaticResource FileTypeToIconConverter}}"
+                                                           Width="24" 
+                                                           Height="24" 
+                                                           VerticalAlignment="Center"
+                                                           Margin="0,0,16,0" />
+
+                                    <!-- File Info -->
+                                    <StackPanel Grid.Column="1" Grid.Row="0">
+                                        <TextBlock Text="{Binding FileName}" 
+                                                 Style="{DynamicResource MaterialDesignSubtitle2TextBlock}" />
+                                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                            <TextBlock Text="{Binding SourceFormat}" 
+                                                     Style="{DynamicResource MaterialDesignCaptionTextBlock}"
+                                                     Margin="0,0,8,0" />
+                                            <materialDesign:PackIcon Kind="ArrowRight" 
+                                                                   Width="12" 
+                                                                   Height="12" 
+                                                                   Margin="0,0,8,0" />
+                                            <TextBlock Text="{Binding TargetFormat}" 
+                                                     Style="{DynamicResource MaterialDesignCaptionTextBlock}"
+                                                     Margin="0,0,16,0" />
+                                            <TextBlock Text="{Binding FileSize, Converter={StaticResource FileSizeConverter}}" 
+                                                     Style="{DynamicResource MaterialDesignCaptionTextBlock}" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Status -->
+                                    <StackPanel Grid.Column="2" 
+                                               Grid.Row="0"
+                                               Margin="8,0">
+                                        <TextBlock Text="{Binding StatusMessage}" 
+                                                 Style="{DynamicResource MaterialDesignCaptionTextBlock}"
+                                                 Foreground="{Binding Status, Converter={StaticResource ConversionStatusToColorConverter}}" />
+                                        <TextBlock Text="{Binding ProcessingTime, Converter={StaticResource TimeSpanToStringConverter}}" 
+                                                 Style="{DynamicResource MaterialDesignCaptionTextBlock}"
+                                                 Visibility="{Binding ProcessingTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    </StackPanel>
+
+                                    <!-- Actions -->
+                                    <StackPanel Grid.Column="3" 
+                                               Grid.Row="0"
+                                               Orientation="Horizontal"
+                                               Margin="8,0,0,0">
+                                        <Button Command="{Binding ConvertCommand}"
+                                              Width="32" 
+                                              Height="32" 
+                                              Padding="4"
+                                              Style="{DynamicResource MaterialDesignIconButton}"
+                                              ToolTip="Convert File"
+                                              IsEnabled="{Binding Status, Converter={StaticResource StatusToPendingConverter}}"
+                                              Margin="0,0,4,0">
+                                            <materialDesign:PackIcon Kind="Play" />
+                                        </Button>
+                                        
+                                        <Button Command="{Binding OpenOutputFolderCommand}"
+                                              Width="32" 
+                                              Height="32" 
+                                              Padding="4"
+                                              Style="{DynamicResource MaterialDesignIconButton}"
+                                              ToolTip="Open Output Folder"
+                                              IsEnabled="{Binding Status, Converter={StaticResource StatusToCompletedConverter}}"
+                                              Margin="0,0,4,0">
+                                            <materialDesign:PackIcon Kind="FolderOpen" />
+                                        </Button>
+                                        
+                                        <Button Command="{Binding RemoveCommand}"
+                                              Width="32" 
+                                              Height="32" 
+                                              Padding="4"
+                                              Style="{DynamicResource MaterialDesignIconButton}"
+                                              ToolTip="Remove File"
+                                              Foreground="{DynamicResource ValidationErrorBrush}">
+                                            <materialDesign:PackIcon Kind="Close" />
+                                        </Button>
+                                    </StackPanel>
+
+                                    <!-- Progress Bar -->
+                                    <ProgressBar Grid.Column="1" 
+                                               Grid.ColumnSpan="3"
+                                               Grid.Row="1"
+                                               Value="{Binding Progress}"
+                                               Height="4"
+                                               Margin="0,8,0,0"
+                                               Visibility="{Binding Status, Converter={StaticResource StatusToProgressVisibilityConverter}}" />
+                                </Grid>
+                            </materialDesign:Card>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+
+        <!-- Status Bar -->
+        <materialDesign:Card Grid.Row="3" 
+                            Margin="16,8,16,16" 
+                            Padding="16,8"
+                            materialDesign:ElevationAssist.Elevation="Dp1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <ProgressBar Grid.Column="0"
+                           Value="{Binding OverallProgress}"
+                           Height="4"
+                           VerticalAlignment="Center"
+                           Margin="0,0,16,0"
+                           Visibility="{Binding IsConverting, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <StackPanel Grid.Column="1" 
+                           Orientation="Horizontal"
+                           VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="FileMultiple" 
+                                           Width="16" 
+                                           Height="16" 
+                                           Margin="0,0,4,0" />
+                    <TextBlock Text="{Binding TotalFiles}" />
+                    <TextBlock Text=" files" Margin="2,0,16,0" />
+                    
+                    <materialDesign:PackIcon Kind="CheckCircle" 
+                                           Width="16" 
+                                           Height="16" 
+                                           Foreground="Green"
+                                           Margin="0,0,4,0" />
+                    <TextBlock Text="{Binding CompletedFiles}" />
+                    <TextBlock Text=" completed" Margin="2,0,16,0" />
+                    
+                    <materialDesign:PackIcon Kind="AlertCircle" 
+                                           Width="16" 
+                                           Height="16" 
+                                           Foreground="Red"
+                                           Margin="0,0,4,0" />
+                    <TextBlock Text="{Binding FailedFiles}" />
+                    <TextBlock Text=" failed" Margin="2,0" />
+                </StackPanel>
+
+                <TextBlock Grid.Column="2" 
+                         Text="File Converter v1.0"
+                         Style="{DynamicResource MaterialDesignCaptionTextBlock}"
+                         VerticalAlignment="Center"
+                         Foreground="{DynamicResource MaterialDesignBodyLight}" />
+            </Grid>
+        </materialDesign:Card>
+    </Grid>
+</Window> 
